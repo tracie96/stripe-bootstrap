@@ -1,0 +1,37 @@
+{
+  "name": "stripe-connect-express-microservice",
+  "version": "1.0.0",
+  "description": "Production-ready Node.js & TypeScript microservice scaffold for Stripe Connect Express onboarding, split payments, and webhook verification.",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "nodemon",
+    "dev:tsx": "tsx watch src/app.ts",
+    "stripe:listen": "stripe listen --forward-to localhost:4242/v1/webhook"
+  },
+  "keywords": [
+    "stripe",
+    "stripe-connect",
+    "microservice",
+    "typescript",
+    "boilerplate",
+    "scaffold"
+  ],
+"author": "Tracy Anele <tracie96@gmail.com> (https://github.com/tracie96)",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "stripe": "^15.12.0",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.2",
+    "@types/swagger-ui-express": "^4.1.8",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.15.1",
+    "typescript": "^5.4.5"
+  }
+}

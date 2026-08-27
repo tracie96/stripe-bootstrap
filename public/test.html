@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Marketplace — Seller Onboarding</title>
+    <style>
+      :root {
+        --bg: #f4f6f9;
+        --card: #ffffff;
+        --text: #111827;
+        --muted: #6b7280;
+        --border: #e5e7eb;
+        --accent: #14a800;
+        --accent-hover: #108a00;
+        --success: #059669;
+        --danger: #dc2626;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.5;
+      }
+
+      .page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+
+      header {
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 1.75rem;
+      }
+
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        gap: 20px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+      }
+
+      .card h2 {
+        margin: 0 0 6px;
+        font-size: 1.1rem;
+      }
+
+      .card p {
+        margin: 0 0 18px;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+
+      .form-grid {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: block;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        background: white;
+      }
+
+      .checkbox-row {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        margin-top: 4px;
+      }
+
+      .checkbox-row input {
+        width: auto;
+        margin-top: 4px;
+      }
+
+      .checkbox-row label {
+        margin: 0;
+        font-weight: 400;
+        font-size: 0.92rem;
+      }
+
+      button {
+        border: none;
+        border-radius: 8px;
+        padding: 11px 18px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: var(--accent);
+        color: white;
+      }
+
+      button:hover:not(:disabled) {
+        background: var(--accent-hover);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      button.secondary {
+        background: #f3f4f6;
+        color: #111827;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+
+      .meta,
+      .requirements {
+        margin-top: 14px;
+        padding: 12px;
+        background: #f9fafb;
+        border-radius: 8px;
+        font-size: 0.88rem;
+      }
+
+      .requirements ul {
+        margin: 8px 0 0;
+        padding-left: 18px;
+      }
+
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .status-item {
+        padding: 12px;
+        border-radius: 8px;
+        background: #f9fafb;
+        border: 1px solid var(--border);
+      }
+
+      .status-item span {
+        display: block;
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+
+      .ok {
+        color: var(--success);
+      }
+
+      .no {
+        color: var(--danger);
+      }
+
+      #message {
+        margin-bottom: 16px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        display: none;
+        font-size: 0.92rem;
+      }
+
+      #message.error {
+        display: block;
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+      }
+
+      #message.success {
+        display: block;
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+      }
+
+      #verification-container {
+        min-height: 360px;
+        margin-top: 12px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      @media (max-width: 640px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <h1>Seller onboarding</h1>
+        <p class="subtitle">
+          Platform-owned onboarding — your UI collects seller details and sends them to Stripe via API.
+          <a href="/api-docs">API docs</a>
+        </p>
+      </header>
+
+      <div id="message"></div>
+
+      <div class="grid">
+        <section class="card" id="create-section">
+          <h2>Step 1 — Create seller profile</h2>
+          <p>Creates a Custom Connect account. No Stripe UI shown.</p>
+          <div class="form-grid">
+            <div class="full">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="seller@example.com" value="seller@example.com" />
+            </div>
+            <div>
+              <label for="country">Country</label>
+              <select id="country">
+                <option value="US" selected>United States</option>
+              </select>
+            </div>
+          </div>
+          <div class="actions">
+            <button id="create-account-btn" type="button">Create seller account</button>
+          </div>
+          <div id="account-meta" class="meta hidden"></div>
+        </section>
+
+        <section class="card hidden" id="onboarding-section">
+          <h2>Step 2 — Personal & payout details</h2>
+          <p>Your forms — test values pre-filled for Stripe test mode.</p>
+          <form id="onboarding-form">
+            <div class="form-grid">
+              <div>
+                <label for="firstName">First name</label>
+                <input id="firstName" required value="Jane" />
+              </div>
+              <div>
+                <label for="lastName">Last name</label>
+                <input id="lastName" required value="Doe" />
+              </div>
+              <div class="full">
+                <label for="sellerEmail">Email</label>
+                <input id="sellerEmail" type="email" required value="seller@example.com" />
+              </div>
+              <div>
+                <label for="phone">Phone</label>
+                <input id="phone" value="+14155552671" />
+              </div>
+              <div>
+                <label for="ssnLast4">SSN last 4 (test: 0000)</label>
+                <input id="ssnLast4" maxlength="4" required value="0000" />
+              </div>
+              <div>
+                <label for="dobDay">DOB day</label>
+                <input id="dobDay" type="number" min="1" max="31" required value="1" />
+              </div>
+              <div>
+                <label for="dobMonth">DOB month</label>
+                <input id="dobMonth" type="number" min="1" max="12" required value="1" />
+              </div>
+              <div>
+                <label for="dobYear">DOB year</label>
+                <input id="dobYear" type="number" required value="1990" />
+              </div>
+              <div class="full">
+                <label for="line1">Street address</label>
+                <input id="line1" required value="123 Main St" />
+              </div>
+              <div>
+                <label for="city">City</label>
+                <input id="city" required value="San Francisco" />
+              </div>
+              <div>
+                <label for="state">State</label>
+                <input id="state" required value="CA" />
+              </div>
+              <div>
+                <label for="postalCode">ZIP</label>
+                <input id="postalCode" required value="94111" />
+              </div>
+              <div class="full">
+                <label for="routingNumber">Bank routing number (test: 110000000)</label>
+                <input id="routingNumber" required value="110000000" />
+              </div>
+              <div class="full">
+                <label for="accountNumber">Bank account number (test: 000123456789)</label>
+                <input id="accountNumber" required value="000123456789" />
+              </div>
+              <div class="full">
+                <label for="businessUrl">Business / profile URL</label>
+                <input
+                  id="businessUrl"
+                  type="url"
+                  required
+                  value="https://example.com/seller/jane-doe"
+                  placeholder="https://yourplatform.com/sellers/jane-doe"
+                />
+              </div>
+              <div class="full">
+                <label for="mcc">Business category (MCC)</label>
+                <select id="mcc" required>
+                  <option value="5734">5734 — Computer software</option>
+                  <option value="7372">7372 — Computer programming</option>
+                  <option value="8999">8999 — Professional services</option>
+                  <option value="7299">7299 — Miscellaneous personal services</option>
+                </select>
+              </div>
+              <div class="full">
+                <label for="productDescription">What do you sell? (optional)</label>
+                <input id="productDescription" value="Freelance consulting and digital services" />
+              </div>
+              <div class="full">
+                <label for="statementDescriptor">Card statement name (max 22 chars)</label>
+                <input id="statementDescriptor" maxlength="22" required value="MY MARKETPLACE" />
+              </div>
+              <div class="full checkbox-row">
+                <input id="acceptTerms" type="checkbox" required checked />
+                <label for="acceptTerms">
+                  I agree to the platform terms of service and authorize payout setup.
+                </label>
+              </div>
+            </div>
+            <div class="actions">
+              <button type="submit">Submit onboarding</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card hidden" id="status-section">
+          <h2>Step 3 — Verification status</h2>
+          <p>Stripe verifies in the background. Refresh to check if the seller can get paid.</p>
+          <button id="refresh-status-btn" type="button" class="secondary">Refresh status</button>
+          <div class="status-grid" id="status-grid"></div>
+          <div id="requirements-box" class="requirements hidden"></div>
+          <p id="requirements-hint" class="hidden" style="margin: 12px 0 0; color: var(--muted); font-size: 0.92rem">
+            These fields map to Step 2. Scroll up, fill every field, and click <strong>Submit onboarding</strong>.
+          </p>
+          <form id="business-form" class="hidden">
+            <p style="margin: 14px 0 10px; color: var(--muted); font-size: 0.92rem">
+              Submit the missing business details below, then refresh status.
+            </p>
+            <div class="form-grid">
+              <div class="full">
+                <label for="businessUrlFix">Business / profile URL</label>
+                <input id="businessUrlFix" type="url" required value="https://example.com/seller/jane-doe" />
+              </div>
+              <div class="full">
+                <label for="mccFix">Business category (MCC)</label>
+                <select id="mccFix" required>
+                  <option value="5734">5734 — Computer software</option>
+                  <option value="7372">7372 — Computer programming</option>
+                  <option value="8999">8999 — Professional services</option>
+                  <option value="7299">7299 — Miscellaneous personal services</option>
+                </select>
+              </div>
+            </div>
+            <div class="actions">
+              <button type="submit">Submit business details</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="card hidden" id="verification-section">
+          <h2>Step 4 — Identity verification (if required)</h2>
+          <p>
+            Only shown when Stripe still needs document verification. This is the one case where Stripe UI
+            appears — embedded in your page, not a redirect.
+          </p>
+          <button id="load-verification-btn" type="button" class="secondary">Load verification form</button>
+          <div id="verification-container"></div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module">
+      let accountId = "";
+      let connectInstance = null;
+
+      const messageEl = document.getElementById("message");
+      const accountMetaEl = document.getElementById("account-meta");
+      const onboardingSection = document.getElementById("onboarding-section");
+      const statusSection = document.getElementById("status-section");
+      const verificationSection = document.getElementById("verification-section");
+      const statusGrid = document.getElementById("status-grid");
+      const requirementsBox = document.getElementById("requirements-box");
+      const businessForm = document.getElementById("business-form");
+      const requirementsHint = document.getElementById("requirements-hint");
+      const verificationContainer = document.getElementById("verification-container");
+
+      const requirementLabels = {
+        "business_profile.mcc": "Business category (MCC)",
+        "business_profile.url": "Business / profile URL",
+        "business_profile.product_description": "Product description",
+        business_type: "Business type",
+        external_account: "Bank account",
+        "representative.first_name": "Representative first name",
+        "representative.last_name": "Representative last name",
+        "representative.email": "Representative email",
+        "representative.dob.day": "Representative date of birth (day)",
+        "representative.dob.month": "Representative date of birth (month)",
+        "representative.dob.year": "Representative date of birth (year)",
+        "settings.payments.statement_descriptor": "Card statement descriptor",
+        "tos_acceptance.date": "Terms acceptance",
+        "tos_acceptance.ip": "Terms acceptance IP",
+      };
+
+      function businessProfilePayload() {
+        return {
+          url: document.getElementById("businessUrl").value.trim(),
+          mcc: document.getElementById("mcc").value,
+          productDescription: document.getElementById("productDescription").value.trim() || undefined,
+        };
+      }
+
+      function needsBusinessProfile(requirements) {
+        const due = [
+          ...(requirements?.currentlyDue ?? []),
+          ...(requirements?.pastDue ?? []),
+        ];
+        return due.some((item) => item.startsWith("business_profile."));
+      }
+
+      function showMessage(text, type) {
+        messageEl.textContent = text;
+        messageEl.className = type;
+      }
+
+      function clearMessage() {
+        messageEl.className = "";
+        messageEl.textContent = "";
+      }
+
+      async function api(path, options = {}) {
+        const response = await fetch(path, options);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(data.error || `Request failed (${response.status})`);
+        }
+        return data;
+      }
+
+      function renderRequirements(requirements) {
+        const due = [
+          ...new Set([
+            ...(requirements?.pendingVerification ?? []),
+            ...(requirements?.currentlyDue ?? []),
+            ...(requirements?.pastDue ?? []),
+          ]),
+        ];
+
+        if (!due.length) {
+          requirementsBox.classList.add("hidden");
+          requirementsHint.classList.add("hidden");
+          businessForm.classList.add("hidden");
+          verificationSection.classList.add("hidden");
+          return;
+        }
+
+        requirementsBox.classList.remove("hidden");
+        requirementsHint.classList.remove("hidden");
+        requirementsBox.innerHTML = `
+          <strong>Still required by Stripe:</strong>
+          <ul>${due.map((item) => `<li>${requirementLabels[item] ?? item} <code>(${item})</code></li>`).join("")}</ul>
+        `;
+
+        if (needsBusinessProfile(requirements)) {
+          businessForm.classList.remove("hidden");
+        } else {
+          businessForm.classList.add("hidden");
+        }
+
+        const needsIdentity = due.some(
+          (item) => item.includes("verification") || item.includes("document")
+        );
+        if (needsIdentity) {
+          verificationSection.classList.remove("hidden");
+        } else {
+          verificationSection.classList.add("hidden");
+        }
+      }
+
+      function renderStatus(status) {
+        const items = [
+          ["Charges enabled", status.chargesEnabled],
+          ["Payouts enabled", status.payoutsEnabled],
+          ["Details submitted", status.detailsSubmitted],
+        ];
+
+        statusGrid.innerHTML = items
+          .map(
+            ([label, value]) => `
+              <div class="status-item">
+                <span>${label}</span>
+                <strong class="${value ? "ok" : "no"}">${value ? "Yes" : "No"}</strong>
+              </div>
+            `
+          )
+          .join("");
+
+        renderRequirements(status.requirements);
+      }
+
+      async function checkStatus() {
+        const status = await api(`/v1/connect/accounts/${accountId}/status`);
+        renderStatus(status);
+        return status;
+      }
+
+      async function mountVerification() {
+        const { loadConnectAndInitialize } = await import("https://esm.sh/@stripe/connect-js@3.3.25");
+        const { publishableKey } = await api("/v1/config/public");
+
+        verificationContainer.innerHTML = "";
+
+        connectInstance = loadConnectAndInitialize({
+          publishableKey,
+          appearance: {
+            variables: {
+              colorPrimary: "#14a800",
+              fontFamily: "Inter, system-ui, sans-serif",
+              borderRadius: "8px",
+            },
+          },
+          fetchClientSecret: async () => {
+            const { clientSecret } = await api("/v1/connect/account-sessions", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ accountId }),
+            });
+            return clientSecret;
+          },
+        });
+
+        const onboarding = connectInstance.create("account-onboarding");
+        onboarding.setOnExit(() => checkStatus());
+        verificationContainer.appendChild(onboarding);
+      }
+
+      document.getElementById("create-account-btn").addEventListener("click", async () => {
+        clearMessage();
+        const button = document.getElementById("create-account-btn");
+        button.disabled = true;
+
+        try {
+          const email = document.getElementById("email").value.trim();
+          const country = document.getElementById("country").value;
+          const result = await api("/v1/connect/accounts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, country }),
+          });
+
+          accountId = result.accountId;
+          accountMetaEl.textContent = `accountId: ${accountId} · country: ${result.country ?? country}`;
+          accountMetaEl.classList.remove("hidden");
+
+          onboardingSection.classList.remove("hidden");
+          statusSection.classList.remove("hidden");
+
+          document.getElementById("sellerEmail").value = email;
+          await checkStatus();
+          showMessage("Seller account created. Complete the form below.", "success");
+        } catch (error) {
+          showMessage(error.message, "error");
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      document.getElementById("onboarding-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearMessage();
+
+        const submitButton = event.target.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+
+        try {
+          const payload = {
+            businessType: "individual",
+            acceptTerms: document.getElementById("acceptTerms").checked,
+            statementDescriptor: document.getElementById("statementDescriptor").value.trim(),
+            businessProfile: businessProfilePayload(),
+            individual: {
+              firstName: document.getElementById("firstName").value.trim(),
+              lastName: document.getElementById("lastName").value.trim(),
+              email: document.getElementById("sellerEmail").value.trim(),
+              phone: document.getElementById("phone").value.trim(),
+              ssnLast4: document.getElementById("ssnLast4").value.trim(),
+              dob: {
+                day: Number(document.getElementById("dobDay").value),
+                month: Number(document.getElementById("dobMonth").value),
+                year: Number(document.getElementById("dobYear").value),
+              },
+              address: {
+                line1: document.getElementById("line1").value.trim(),
+                city: document.getElementById("city").value.trim(),
+                state: document.getElementById("state").value.trim(),
+                postalCode: document.getElementById("postalCode").value.trim(),
+                country: document.getElementById("country").value,
+              },
+            },
+            bankAccount: {
+              routingNumber: document.getElementById("routingNumber").value.trim(),
+              accountNumber: document.getElementById("accountNumber").value.trim(),
+              country: document.getElementById("country").value,
+              currency: "usd",
+            },
+          };
+
+          const result = await api(`/v1/connect/accounts/${accountId}/onboarding`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          renderStatus(result);
+
+          if (result.chargesEnabled && result.payoutsEnabled) {
+            showMessage("Onboarding complete — seller can accept payments.", "success");
+          } else if ((result.requirements?.currentlyDue ?? []).length) {
+            showMessage("Profile saved. Complete identity verification below if prompted.", "success");
+          } else {
+            showMessage("Profile submitted. Stripe is reviewing the account.", "success");
+          }
+        } catch (error) {
+          showMessage(error.message, "error");
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      document.getElementById("business-form").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        clearMessage();
+
+        const submitButton = event.target.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+
+        try {
+          const result = await api(`/v1/connect/accounts/${accountId}/onboarding`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              acceptTerms: true,
+              statementDescriptor: document.getElementById("statementDescriptor").value.trim(),
+              businessProfile: {
+                url: document.getElementById("businessUrlFix").value.trim(),
+                mcc: document.getElementById("mccFix").value,
+              },
+            }),
+          });
+
+          renderStatus(result);
+          showMessage("Business details submitted. Click Refresh status to verify.", "success");
+        } catch (error) {
+          showMessage(error.message, "error");
+        } finally {
+          submitButton.disabled = false;
+        }
+      });
+
+      document.getElementById("refresh-status-btn").addEventListener("click", async () => {
+        clearMessage();
+        try {
+          await checkStatus();
+          showMessage("Status refreshed.", "success");
+        } catch (error) {
+          showMessage(error.message, "error");
+        }
+      });
+
+      document.getElementById("load-verification-btn").addEventListener("click", async () => {
+        clearMessage();
+        try {
+          await mountVerification();
+          showMessage("Verification form loaded.", "success");
+        } catch (error) {
+          showMessage(error.message, "error");
+        }
+      });
+    </script>
+  </body>
+</html>
