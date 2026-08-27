@@ -20,8 +20,8 @@ An event-driven, production-grade microservice boilerplate for multi-party marke
 ### Installation
 
 ```bash
-git clone https://github.com/your-username/stripe-connect-express-microservice.git
-cd stripe-connect-express-microservice
+git clone https://github.com/tracie96/stripe-bootstrap.git
+cd stripe-bootstrap
 npm install
 cp .env.example .env
 ```
@@ -192,6 +192,12 @@ stripe-connect-express-microservice/
     └── app.ts
 ```
 
+## Built by
+
+Made with ☕ and slightly too much Stripe docs-reading by **[Tracy Anele](https://github.com/tracie96)** — shipping a Connect scaffold so you don’t have to wrestle raw webhook buffers at 2am.
+
+If this saved you a weekend of “why is `stripe-signature` failing?”, come say hi (or star the repo) on GitHub: [github.com/tracie96](https://github.com/tracie96)
+
 ## License
 
-MIT
+MIT — Copyright (c) 2026 Tracy Anele
